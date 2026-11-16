@@ -1,0 +1,58 @@
+{
+    "name": "alveby/atrium-search",
+    "description": "Site search for Atrium: one search across every installed module, per site and language, with database full-text on SQLite, MySQL and PostgreSQL",
+    "type": "atrium-module",
+    "license": "MIT",
+    "homepage": "https://github.com/AlveBy/atrium",
+    "support": {
+        "issues": "https://github.com/AlveBy/atrium/issues",
+        "source": "https://github.com/AlveBy/atrium"
+    },
+    "keywords": [
+        "laravel",
+        "admin",
+        "cms",
+        "search",
+        "full-text",
+        "multisite",
+        "i18n"
+    ],
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^13.0",
+        "alveby/atrium": "^0.1"
+    },
+    "require-dev": {
+        "alveby/atrium-theme": "^0.1",
+        "orchestra/testbench": "^11.0",
+        "phpunit/phpunit": "^12.5"
+    },
+    "suggest": {
+        "alveby/atrium-theme": "Draws the results page and the search box in the header"
+    },
+    "autoload": {
+        "psr-4": {
+            "Atrium\\Search\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Atrium\\Search\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "atrium": {
+            "migrations": "database/migrations"
+        },
+        "laravel": {
+            "providers": [
+                "Atrium\\Search\\SearchServiceProvider"
+            ]
+        },
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
