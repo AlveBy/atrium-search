@@ -11,6 +11,7 @@ namespace Atrium\Search;
 
 use Atrium\Admin\Models\AdminUser;
 use Atrium\Admin\Modules\Modules;
+use Atrium\Admin\Support\ConfigList;
 use Atrium\Search\Console\RebuildCommand;
 use Atrium\Search\Http\Controllers\SearchController;
 use Atrium\Search\Mcp\SearchSite;
@@ -65,13 +66,13 @@ final class SearchServiceProvider extends ServiceProvider
         }
 
         $this->loadRoutesFrom(__DIR__.'/../routes/search.php');
-        config()->push('atrium.mcp.tools', SearchSite::class);
+        ConfigList::add('atrium.mcp.tools', SearchSite::class);
 
         // The results page and the box in the header are drawn by the theme.
         $this->app->booted(function (): void {
             if (View::exists('atrium-theme::layout')) {
                 $this->registerPublicRoutes();
-                config()->push('atrium-theme.header_views', 'atrium-search::box');
+                ConfigList::add('atrium-theme.header_views', 'atrium-search::box');
             }
         });
 

@@ -11,6 +11,8 @@ namespace Atrium\Search\Tests\Feature;
 
 use Atrium\Admin\Models\Language;
 use Atrium\Admin\Models\Site;
+use Atrium\Search\Mcp\SearchSite;
+use Atrium\Search\SearchServiceProvider;
 use Atrium\Search\Tests\TestCase;
 use Illuminate\Foundation\Http\Middleware\TrimStrings;
 
@@ -193,5 +195,15 @@ final class SearchPageTest extends TestCase
             ->assertOk()
             ->assertSee('data-search-box', false)
             ->assertSee('name="q" value=""', false);
+    }
+
+    public function test_the_box_is_in_the_header_once_after_config_cache(): void
+    {
+        // A cached config already holds the box: booting on top of it must not add a second one.
+        $this->app->getProvider(SearchServiceProvider::class)->boot();
+
+        $this->assertSame(1, substr_count((string) $this->get('/')->assertOk()->getContent(), 'data-search-box'));
+        $this->assertSame(['atrium-search::box'], array_values(array_filter((array) config('atrium-theme.header_views'), static fn ($view): bool => $view === 'atrium-search::box')));
+        $this->assertSame(1, array_count_values((array) config('atrium.mcp.tools'))[SearchSite::class]);
     }
 }
