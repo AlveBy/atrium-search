@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Atrium\Search\Tests\Feature;
 
 use Atrium\Admin\Models\Language;
+use Atrium\Admin\Models\Site;
+use Atrium\Admin\Support\RecordDeleter;
 use Atrium\Search\Indexer;
 use Atrium\Search\Models\SearchEntry;
 use Atrium\Search\Tests\Fixtures\Post;
@@ -104,5 +106,17 @@ final class RebuildTest extends TestCase
 
         $this->assertSame([Post::class => 101], app(Indexer::class)->rebuild(Post::class));
         $this->assertCount(3, $this->queries('insert', 'search_index'));
+    }
+
+    public function test_the_rebuild_takes_the_records_of_every_site_and_leaves_the_trash_out(): void
+    {
+        $second = Site::query()->create(['code' => 'second', 'name' => 'Second', 'folder' => 'site2']);
+        $this->makePost(['en' => 'Here']);
+        $this->makePost(['en' => 'There'], ['site_id' => $second->id]);
+        app(RecordDeleter::class)->delete($this->makePost(['en' => 'Binned']));
+        SearchEntry::query()->delete();
+
+        $this->assertSame([Post::class => 2], app(Indexer::class)->rebuild(Post::class));
+        $this->assertSame(['Here', 'There'], SearchEntry::query()->orderBy('title')->pluck('title')->all());
     }
 }

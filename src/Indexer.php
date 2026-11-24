@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Atrium\Search;
 
+use Atrium\Admin\Scopes\SiteScope;
 use Atrium\Admin\Support\ContentLanguages;
 use Atrium\Admin\Support\RecordUrls;
 use Atrium\Search\Models\SearchEntry;
@@ -77,7 +78,7 @@ final class Indexer
             SearchEntry::query()->where('searchable_type', $class)->delete();
             $counts[$class] = 0;
 
-            $class::query()->withoutGlobalScopes()->lazyById(200)->each(function (Model $record) use ($class, &$counts): void {
+            $class::query()->withoutGlobalScope(SiteScope::class)->lazyById(200)->each(function (Model $record) use ($class, &$counts): void {
                 foreach (array_chunk($this->rows($record), 50) as $rows) {
                     SearchEntry::query()->insert($rows);
                     $counts[$class] += count($rows);
